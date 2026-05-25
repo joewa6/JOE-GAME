@@ -2089,6 +2089,7 @@ function renderOverallAttribution(){
     }
     state.overallAttributionDecisionTime = state.overallAttributionStartTime ? Date.now() - state.overallAttributionStartTime : null;
     state.screen='end';
+    finishGame();  // fires postMessage HERE
     render();
   };
   inner.appendChild(btn);
@@ -2155,46 +2156,17 @@ function renderPostCompetence(){
 
 // END
 function renderEnd(){
-  if(!state.completionCode) state.completionCode=generateCode();
-  var wrap=mkEl('div','fade-in'); wrap.style.width='100%';
-  var card=mkEl('div','card'); var inner=mkEl('div','end-inner');
-  var title=mkEl('div','end-title'); title.textContent='Task Complete'; inner.appendChild(title);
+  var wrap = mkEl('div','fade-in'); wrap.style.width='100%';
+  var card = mkEl('div','card');
+  var inner = mkEl('div','end-inner');
+  var title = mkEl('div','end-title'); title.textContent='All done!'; inner.appendChild(title);
   var body=mkEl('div','end-body');
-  body.innerHTML='Thank you for playing! You have completed all '+ROUNDS.length+' rounds.<br><br>'+
-    'Please click the button below to record your responses and generate your personal code.';
+  body.textContent='Sending your responses. The survey will continue automatically...';
   inner.appendChild(body);
-  // Button first
-  var btn=mkEl('button','btn btn-submit');
-  btn.textContent='\uD83D\uDCCB Record responses and generate personal code';
-  btn.style.cssText='max-width:420px;width:100%;margin-top:8px;font-size:16px;';
-  // Code block (hidden until button clicked)
-  var codeWrap=mkEl('div'); codeWrap.style.cssText='display:none;margin-top:24px;text-align:center;';
-  var codeInstr=mkEl('div','end-body'); codeInstr.innerHTML='<strong>Your personal code:</strong>';
-  var codeBox=mkEl('div','completion-code'); codeBox.textContent=state.completionCode;
-  var codeNote=mkEl('div','end-body');
-  codeNote.style.cssText='margin-top:16px;font-size:15px;color:#2d6a4f;border:2px solid #2d6a4f;border-radius:8px;padding:12px;background:#f0f7f4;';
-  codeNote.innerHTML='Your code is shown below. You will be returned to the survey automatically.';
-  if(!getReturnSurveyUrl()){
-    var warn=mkEl('div','end-body');
-    warn.style.cssText='color:#b00020;margin-top:12px;font-weight:600;';
-    warn.textContent='No survey return URL in the launch link — cannot return to Qualtrics. Contact the researcher.';
-    inner.appendChild(warn);
-  }
-  codeWrap.appendChild(codeInstr); codeWrap.appendChild(codeBox); codeWrap.appendChild(codeNote);
-  btn.onclick=function(){
-    finishGame();
-    btn.disabled=true;
-    codeWrap.style.display='block';
-    codeBox.textContent=state.completionCode;
-    if(state._returnURL){
-      btn.textContent='Returning to survey\u2026';
-      setTimeout(function(){ window.location.href=state._returnURL; }, 800);
-    } else {
-      btn.textContent='\u2713 Responses recorded (no return URL)';
-    }
-  };
-  inner.appendChild(btn); inner.appendChild(codeWrap);
-  card.appendChild(inner); wrap.appendChild(card); return wrap;
+  var spinner = mkEl('div'); spinner.style.cssText='font-size:40px;margin-top:8px;';
+  spinner.textContent='⏳'; inner.appendChild(spinner);
+  card.appendChild(inner); wrap.appendChild(card);
+  return wrap;
 }
 
 // ================================
