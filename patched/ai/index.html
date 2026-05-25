@@ -2319,7 +2319,7 @@ function finishGame(){
   // Send to Qualtrics parent frame
   // Falls back gracefully if not in an iframe (e.g. during dev testing)
   try {
-    window.parent.postMessage(payload, 'https://your-institution.qualtrics.com');
+    window.parent.postMessage(payload, 'https://universityofgraz.qualtrics.com');
   } catch(e) {
     console.warn('postMessage failed:', e);
   }
